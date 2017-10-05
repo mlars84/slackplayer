@@ -18,8 +18,10 @@ export class HomePage {
  public messages: any;
  public channels: any;
  public voices: any;
+ public enabledChannels: any[] = [];
+ public user: any;
  API_URL = 'http://slackplayer.com/conversation/';
- SLACK_TOKEN = '{YOUR_SLACK_API_TOKEN}';
+ SLACK_TOKEN = 'xoxp-6730903766-89598566801-247255349857-46aeee42f8f1cec7224f37eedb66bbf1';
 
   constructor(public navCtrl: NavController, public auth: AuthService,  public http: Http, public authHttp: AuthHttp) {
     auth.handleAuthentication();
@@ -75,6 +77,8 @@ export class HomePage {
 
     console.log(userArray);
 
+    let realUserName = this.getUser(userArray[0]);
+
     //TODO: need to get the user.real_name from the Slack API for each of the users mentioned 
     //in the message and do a search and replace on the @mention with the userId
 
@@ -96,11 +100,36 @@ export class HomePage {
       );
     }
 
+  public toggleChannel(channelName, channelChecked): void {
+    if (channelChecked) {
+      this.enabledChannels.push(channelName);
+    } else {
+      let channelIndex = this.enabledChannels.indexOf(channelName);
+      this.enabledChannels.splice(channelIndex);
+    }
+    // console.log(this.enabledChannels);
+  }
+
+  public getUser(userId) {
+    return this.http.get(`https://slack.com/api/user.info?token=${this.SLACK_TOKEN}&user=${userId}`)
+    .map(res => res.json())
+    .subscribe(
+      data => data.user.real_name
+    );
+  }
+
   public getChannels(): void {
     this.http.get(`https://slack.com/api/channels.list?token=${this.SLACK_TOKEN}&limit=100`)
     .map(res => res.json())
     .subscribe(
-      data => this.channels = data.channels
+      data => {
+        this.channels = data.channels
+        this.channels.forEach(element => {
+          element.checked = true;
+          this.toggleChannel(element.name, element.checked);
+        });
+        // this.channels.map(channels => this.enabledChannels = channels.name);
+      }
     );
   }
 

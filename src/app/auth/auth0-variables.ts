@@ -6,10 +6,10 @@ interface AuthConfig {
 }
 
 export const AUTH_CONFIG: AuthConfig = {
-  clientID: '{YOUR_CLIENT_ID}', 
-  domain: '{YOUR_AUTH0_DOMAIN}',
+  clientID: '7H1HvoGeliq3SpcU9LP7PfZPQmI0F2I5', 
+  domain: 'mlars84.auth0.com',
   callbackURL: 'http://localhost:8100/#/callback',
-  apiUrl: '{YOUR_API_URL}'
+  apiUrl: 'https://mlars84.auth0.com/api/v2/'
 };
 
 
